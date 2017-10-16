@@ -1,0 +1,29 @@
+Start with 2d, add 3d rock?
+javascript 2d canvas for building
+3 features - head, eyes, body
+different cages (terrarium)
+Add stickers (can do later)
+Mobile/web friendly
+framework for save data/users
+Setup user accounts to login
+3 of each asset (rocks, hats, eyes, etc)
+Need to flesh out story and interactions
+Track time out of game
+Move towards app quickly if it seems promising
+Interaction with environment
+Achievements
+Leaderboard with random point assignments
+Cookie click is addictive - 
+Earn adventures (text adventure, rock hunting, etc.)
+  watching ads gets you there faster
+Currency system - gold? rockefeller oysters? sand dollar? gems? Their own rock currency: Larries, Carls? You earned 5 Carls.
+How do you earn Carls? Bonus Carls each day, or by watching video ads
+You got a streak! (Carl streaks across the screen)
+Geometry Dash like games to earn Carls
+Physics like rock drop?
+Tank/Bowmasters game?
+Look into Unreal Engine - more advanced version
+Other rocks make cameos?
+Gifts for logging in on holidays
+CALEB - content for graphics, dialogue, games, etc. Make folder of graphics and save AIs and assets
+KEVIN - everything else (start with getting graphics on screen, and swapping out items)
