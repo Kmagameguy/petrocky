@@ -45,7 +45,7 @@
 				// create the object we want to render in 3d space
 				geometry = new THREE.SphereGeometry( 1, 20, 20 );
 				// apply a texture to the object
-				material = new THREE.MeshPhongMaterial( {color: 0x00ff00, flatShading: true } );
+				material = new THREE.MeshPhongMaterial( {color: 0x00ff00, flatShading: false } );
 				// create the mesh which is a combo of the geometry and material objects
 				cube = new THREE.Mesh( geometry, material );
 				// create lights
