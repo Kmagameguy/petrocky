@@ -3,100 +3,45 @@
 	<head>
 		<meta charset=utf-8>
 		<title>Rockpet</title>
+		<style>*{padding: 0; margin:0}</style>
 		<style>
 			body { margin: 0; }
 			canvas { width: 100%; height: 100% }
 		</style>
 	</head>
+	<script src="js/pixi.min.js"></script>
 	<body>
-		<script src="js/three.js"></script>
-		<script src="js/TrackballControls.js"></script>
-		<script>
-
-			var camera, controls, scene, renderer;
-
+		<script type="text/javascript">
+			// startup function
 			function init(){
-				// create the empty scene
-				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xcccccc );
-
-				// create a camera to view the document through: FOV, aspect ratio, near clipping plane, far clipping plane
-				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-				// move our camera back so it isn't inside the mesh
-				camera.position.z = 5;
-
-				// setup our mouse & keyboard controls
-				controls = new THREE.TrackballControls( camera );
-				controls.rotateSpeed = 1.0;
-				controls.zoomSpeed = 1.2;
-				controls.panSpeed = 0.8;
-
-				controls.noZoom = false;
-				controls.noPan = false;
-
-				controls.staticMoving = true;
-				controls.dynamicDampingFactor = 0.3;
-
-				controls.keys = [ 65, 83, 68 ];
-
-				controls.addEventListener( 'change', render);
-
-
-				// create the object we want to render in 3d space
-				geometry = new THREE.SphereGeometry( 1, 20, 20 );
-				// apply a texture to the object
-				material = new THREE.MeshPhongMaterial( {color: 0x00ff00, flatShading: false } );
-				// create the mesh which is a combo of the geometry and material objects
-				cube = new THREE.Mesh( geometry, material );
-				// create lights
-				scene.add( new THREE.AmbientLight( 0x505050 ) );
-				light = new THREE.SpotLight( 0xffffff, 1.5 );
-				light.position.set( 1, 1, 1 );
-				light.castShadow = true;
-				light.shadow = new THREE.LightShadow( new THREE.PerspectiveCamera( 50, 1, 200, 10000 ) );
-				light.shadow.bias = -0.00022;
-				
-				light.shadow.mapSize.width = 1024;
-				light.shadow.mapSize.height = 1024;
-
-				// lastly attach our object to the scene
-				scene.add( cube );
-				scene.add( light );
-
-				// create the renderer
-				renderer = new THREE.WebGLRenderer();
-				// set viewsize of the renderer; right now it's at half-size (relies on canvas at 100% width/height)
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				// attach renderer to our document
-				document.body.appendChild( renderer.domElement );
-
-				window.addEventListener( 'resize', onWindowResize, false);
-
-				render();
-			}
-
-			function onWindowResize(){
-				camera.aspect = window.innerwidth / window.innerheight;
-				camera.updateProjectionMatrix();
-
-				renderer.setSize (window.innerWidth/2, window.innerHeight/2 );
-
-				controls.handleReszie();
-
-				render();
-			}
-
-			// create the function that draws our whole scene/camera/mesh @ 60fps
-			function animate() {
-				requestAnimationFrame( animate );
-				controls.update();
-			}
-
-			function render() {
-				renderer.render( scene, camera );
+				// Aliases
+				var Container = PIXI.Container,
+					autoDetectRenderer = PIXI.autoDetectRenderer,
+					loader = PIXI.loader,
+					resources = PIXI.loader.resources,
+					Sprite = PIXI.Sprite;
+				//create the world
+				var stage = new Container(),
+					renderer = autoDetectRenderer(256, 256, {antialias:false, transparent: false, resolution: 1});
+					renderer.backgroundColor = 0x061639;
+					renderer.view.style.position = "absolute";
+					renderer.view.style.display = "block";
+					renderer.autoResize = true;
+					renderer.resize(window.innerWidth, window.innerHeight);
+				document.body.appendChild(renderer.view);
+				loader
+					.add("images/Obsidian.png")
+					.load(setup);
+				// load up our sprites
+				function setup(){
+					var defaultRock = new Sprite(resources["images/Obsidian.png"].texture);
+					defaultRock.x = window.innerWidth/2;
+					defaultRock.y = window.innerHeight/2;
+					stage.addChild(defaultRock);
+					renderer.render(stage);
+				}
 			}
 			init();
-			animate();
 		</script>
 	</body>
 </html>
