@@ -7,96 +7,108 @@
 			body { margin: 0; }
 			canvas { width: 100%; height: 100% }
 		</style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <scrip src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	</head>
+	<script src="js/pixi.min.js"></script>
 	<body>
-		<script src="js/three.js"></script>
-		<script src="js/TrackballControls.js"></script>
-		<script>
+    <div class="container">
+      <nav class="navbar navbar-light bg-faded">
+        <h1 class="navbar-brand mb-0" href="#">Rock Pet [dot] com</h1>
+      </nav>
+      <div id="docBody"></div>
+    </div>
+		<script type="text/javascript">
+			// startup function
+			// Aliases
+      var div = document.getElementById('docBody');
+			var Container = PIXI.Container,
+				autoDetectRenderer = PIXI.autoDetectRenderer,
+				loader = PIXI.loader,
+				resources = PIXI.loader.resources,
+				Sprite = PIXI.Sprite;
+			//create the world
+      var size = [600, 600];
+      var ratio = size[0] / size[1];
+			var stage = new Container(),
+				renderer = autoDetectRenderer(size[0], size[1], {antialias:false, transparent: false, resolution: 1});
+				renderer.backgroundColor = 0x061639;
+				//renderer.view.style.position = "absolute";
+				//renderer.view.style.display = "block";
+			docBody.appendChild(renderer.view);
 
-			var camera, controls, scene, renderer;
+			loader
+				.add("images/Obsidian.png")
+        .add("images/starburst_BG.png")
+				.load(setup);
 
-			function init(){
-				// create the empty scene
-				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xcccccc );
+			var defaultRock, bg;
+      var count = 0;
+      var rockText;
+      // load up our sprites
+			function setup(){
+        bg = new Sprite(resources["images/starburst_BG.png"].texture);
+        bg.anchor.set(0.5);
+        bg.width = size[0];
+        bg.height = size[1];
+        bg.x = size[0] / 2;
+        bg.y = size[1] / 2;
+        stage.addChild(bg);
 
-				// create a camera to view the document through: FOV, aspect ratio, near clipping plane, far clipping plane
-				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-				// move our camera back so it isn't inside the mesh
-				camera.position.z = 5;
+        defaultRock = new Sprite(resources["images/Obsidian.png"].texture);
+        defaultRock.interactive = true;
+        defaultRock.buttonMode = true;
+        defaultRock.on('click', onRockClick);
+				defaultRock.anchor.set(0.5);
+				defaultRock.x = size[0] / 2;
+				defaultRock.y = size[1] / 2;
+				stage.addChild(defaultRock);
 
-				// setup our mouse & keyboard controls
-				controls = new THREE.TrackballControls( camera );
-				controls.rotateSpeed = 1.0;
-				controls.zoomSpeed = 1.2;
-				controls.panSpeed = 0.8;
+        rockText = new PIXI.Text('', {fontFamily: 'Arial', fontSize: 24, fill: 0xededed, align: 'center'});
+        rockText.anchor.set(0.5);
+        rockText.x = size[0]/2;
+        rockText.y = size[1]/2 - defaultRock.height;
 
-				controls.noZoom = false;
-				controls.noPan = false;
-
-				controls.staticMoving = true;
-				controls.dynamicDampingFactor = 0.3;
-
-				controls.keys = [ 65, 83, 68 ];
-
-				controls.addEventListener( 'change', render);
-
-
-				// create the object we want to render in 3d space
-				geometry = new THREE.SphereGeometry( 1, 20, 20 );
-				// apply a texture to the object
-				material = new THREE.MeshPhongMaterial( {color: 0x00ff00, flatShading: false } );
-				// create the mesh which is a combo of the geometry and material objects
-				cube = new THREE.Mesh( geometry, material );
-				// create lights
-				scene.add( new THREE.AmbientLight( 0x505050 ) );
-				light = new THREE.SpotLight( 0xffffff, 1.5 );
-				light.position.set( 1, 1, 1 );
-				light.castShadow = true;
-				light.shadow = new THREE.LightShadow( new THREE.PerspectiveCamera( 50, 1, 200, 10000 ) );
-				light.shadow.bias = -0.00022;
-				
-				light.shadow.mapSize.width = 1024;
-				light.shadow.mapSize.height = 1024;
-
-				// lastly attach our object to the scene
-				scene.add( cube );
-				scene.add( light );
-
-				// create the renderer
-				renderer = new THREE.WebGLRenderer();
-				// set viewsize of the renderer; right now it's at half-size (relies on canvas at 100% width/height)
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				// attach renderer to our document
-				document.body.appendChild( renderer.domElement );
-
-				window.addEventListener( 'resize', onWindowResize, false);
-
-				render();
+        stage.addChild(rockText);
+				gameLoop();
 			}
 
-			function onWindowResize(){
-				camera.aspect = window.innerwidth / window.innerheight;
-				camera.updateProjectionMatrix();
+      function gameLoop(){
+        requestAnimationFrame(gameLoop);
 
-				renderer.setSize (window.innerWidth/2, window.innerHeight/2 );
+        renderer.render(stage);
+      }
 
-				controls.handleReszie();
+      function resize(){
+        if(window.innerWidth / window.innerHeight >= ratio){
+          var w = window.innerHeight * ratio;
+          var h = window.innerHeight;
+        }
+        else {
+          var w = window.innerWidth;
+          var h = window.innerWidth / ratio;
+        }
+        renderer.view.style.width = w + "px";
+        renderer.view.style.height = h + "px";
+      }
+      window.onresize = resize;
 
-				render();
+			function onRockClick(){
+        switch(count){
+          case 0:
+            rockText.text = 'Ooooh, you touch my tralala';
+            break;
+          case 1:
+            rockText.text = 'My ding ding dong';
+            break;
+          case 2:
+            rockText.text = 'Stop touching me';
+            break;
+          default:
+            rockText.text = '';
+        }
+        count++;
 			}
-
-			// create the function that draws our whole scene/camera/mesh @ 60fps
-			function animate() {
-				requestAnimationFrame( animate );
-				controls.update();
-			}
-
-			function render() {
-				renderer.render( scene, camera );
-			}
-			init();
-			animate();
 		</script>
 	</body>
 </html>
