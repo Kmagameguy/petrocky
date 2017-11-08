@@ -33,21 +33,28 @@
 			var stage = new Container(),
 				renderer = autoDetectRenderer(size[0], size[1], {antialias:false, transparent: false, resolution: 1});
 				renderer.backgroundColor = 0x061639;
-				//renderer.view.style.position = "absolute";
-				//renderer.view.style.display = "block";
 			docBody.appendChild(renderer.view);
 
 			loader
 				.add("images/Obsidian.png")
+				.add("images/Terrarium-in-a-Bottle.png")
         .add("images/starburst_BG.png")
 				.load(setup);
 
 			var defaultRock, bg;
       var count = 0;
       var rockText;
+			var texture = {};
       // load up our sprites
 			function setup(){
-        bg = new Sprite(resources["images/starburst_BG.png"].texture);
+				//dummy textures that we can use to loop through the different rock skins
+				//ask caleb to redesign these such that they all fit within the same
+				//bounding box so there isn't weird sizing changes when switching
+				//can reassign textures with [object].texture = texture[x];
+				texture[0] = PIXI.Texture.fromImage("art_assets/Obsidian.png");
+				texture[1] = PIXI.Texture.fromImage("images/Granite.png");
+
+				bg = new Sprite(resources["images/starburst_BG.png"].texture);
         bg.anchor.set(0.5);
         bg.width = size[0];
         bg.height = size[1];
@@ -55,7 +62,7 @@
         bg.y = size[1] / 2;
         stage.addChild(bg);
 
-        defaultRock = new Sprite(resources["images/Obsidian.png"].texture);
+        defaultRock = new Sprite(resources["art_assets/Obsidian.png"].texture);
         defaultRock.interactive = true;
         defaultRock.buttonMode = true;
         defaultRock.on('click', onRockClick);
@@ -64,10 +71,19 @@
 				defaultRock.y = size[1] / 2;
 				stage.addChild(defaultRock);
 
+				overlay = new Sprite(resources["art_assets/Terrarium-in-a-Bottle.png"].texture);
+				overlay.interactive = false;
+				overlay.anchor.set(0.5);
+				overlay.width = overlay.width / 8;
+				overlay.height = overlay.height / 8;
+				overlay.x = size[0] / 2 + 70;
+				overlay.y = size[1] / 2 - (defaultRock.height / 2) + 10;
+				stage.addChild(overlay);
+
         rockText = new PIXI.Text('', {fontFamily: 'Arial', fontSize: 24, fill: 0xededed, align: 'center'});
         rockText.anchor.set(0.5);
         rockText.x = size[0]/2;
-        rockText.y = size[1]/2 - defaultRock.height;
+        rockText.y = size[1]/2 - overlay.height;
 
         stage.addChild(rockText);
 				gameLoop();
@@ -104,6 +120,9 @@
           case 2:
             rockText.text = 'Stop touching me';
             break;
+					case 3:
+						rockText.text = ''
+						count = -1;
           default:
             rockText.text = '';
         }
